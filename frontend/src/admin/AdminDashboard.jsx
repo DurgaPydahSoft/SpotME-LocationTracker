@@ -832,7 +832,7 @@ const AdminDashboard = () => {
     if (window.confirm(`Are you sure you want to permanently delete user "${userName}"? This action cannot be undone and will remove all their location data.`)) {
       try {
         const token = localStorage.getItem('adminToken')
-        const response = await fetch(`/api/users/${encodeURIComponent(userName)}`, {
+        const response = await fetch(getApiUrl(`/api/users/${encodeURIComponent(userName)}`), {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`
