@@ -17,7 +17,9 @@ const authenticateAdmin = (req, res, next) => {
       return res.status(403).json({ error: 'Admin access required' });
     }
     
+    // Set both for compatibility
     req.user = decoded;
+    req.adminUser = decoded;
     next();
   });
 };

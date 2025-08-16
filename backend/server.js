@@ -478,18 +478,23 @@ app.post('/api/users/start-tracking', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Username is required' });
     }
     
+    console.log('Starting tracking for user:', userName, 'by admin:', req.adminUser?.username || req.adminUser?.name);
+    
     // Update user's tracking status in Supabase
     const { error } = await supabase
       .from('users')
       .update({ 
         is_tracking: true,
         admin_tracking_started: new Date().toISOString(),
-        admin_tracking_started_by: req.adminUser.name
+        admin_tracking_started_by: req.adminUser?.username || req.adminUser?.name || 'admin'
       })
       .eq('name', userName)
       .eq('is_active', true);
     
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase update error:', error);
+      throw error;
+    }
     
     res.json({ 
       success: true, 
@@ -513,18 +518,23 @@ app.post('/api/users/stop-tracking', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Username is required' });
     }
     
+    console.log('Stopping tracking for user:', userName, 'by admin:', req.adminUser?.username || req.adminUser?.name);
+    
     // Update user's tracking status in Supabase
     const { error } = await supabase
       .from('users')
       .update({ 
         is_tracking: false,
         admin_tracking_stopped: new Date().toISOString(),
-        admin_tracking_stopped_by: req.adminUser.name
+        admin_tracking_stopped_by: req.adminUser?.username || req.adminUser?.name || 'admin'
       })
       .eq('name', userName)
       .eq('is_active', true);
     
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase update error:', error);
+      throw error;
+    }
     
     res.json({ 
       success: true, 
@@ -568,17 +578,22 @@ app.get('/api/users/tracking-status', authenticateAdmin, async (req, res) => {
 
 app.post('/api/users/start-all-tracking', authenticateAdmin, async (req, res) => {
   try {
+    console.log('Starting tracking for all users by admin:', req.adminUser?.username || req.adminUser?.name);
+    
     // Start tracking for all active users
     const { error } = await supabase
       .from('users')
       .update({ 
         is_tracking: true,
         admin_tracking_started: new Date().toISOString(),
-        admin_tracking_started_by: req.adminUser.name
+        admin_tracking_started_by: req.adminUser?.username || req.adminUser?.name || 'admin'
       })
       .eq('is_active', true);
     
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase bulk update error:', error);
+      throw error;
+    }
     
     res.json({ 
       success: true, 
@@ -596,17 +611,22 @@ app.post('/api/users/start-all-tracking', authenticateAdmin, async (req, res) =>
 
 app.post('/api/users/stop-all-tracking', authenticateAdmin, async (req, res) => {
   try {
+    console.log('Stopping tracking for all users by admin:', req.adminUser?.username || req.adminUser?.name);
+    
     // Stop tracking for all active users
     const { error } = await supabase
       .from('users')
       .update({ 
         is_tracking: false,
         admin_tracking_stopped: new Date().toISOString(),
-        admin_tracking_stopped_by: req.adminUser.name
+        admin_tracking_stopped_by: req.adminUser?.username || req.adminUser?.name || 'admin'
       })
       .eq('is_active', true);
     
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase bulk update error:', error);
+      throw error;
+    }
     
     res.json({ 
       success: true, 
