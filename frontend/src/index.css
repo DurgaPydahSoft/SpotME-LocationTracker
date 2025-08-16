@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+.loading {
+  @apply inline-block w-5 h-5 border-2 border-gray-300 border-t-red-500 rounded-full animate-spin mr-2;
+}
+
+/* Leaflet map customizations */
+.leaflet-control-attribution {
+  font-size: 10px !important;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 640px) {
+  /* Prevent text selection on buttons for better mobile UX */
+  button {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Improve touch targets */
+  .copy-btn, .map-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Landscape mobile optimization */
+@media (max-width: 768px) and (orientation: landscape) {
+  .container {
+    gap: 16px;
+  }
+  
+  .left-panel, .right-panel {
+    padding: 16px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+  
+  #spotMeBtn {
+    padding: 12px 24px;
+    margin-bottom: 16px;
+  }
+}
