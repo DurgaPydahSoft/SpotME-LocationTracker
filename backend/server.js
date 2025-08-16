@@ -84,6 +84,8 @@ app.post('/api/geocode', async (req, res) => {
 app.post('/api/users', async (req, res) => {
   const { name, id, isActive, lastUpdated } = req.body;
   
+  console.log('Creating user with data:', { name, id, isActive, lastUpdated });
+  
   if (!name) {
     return res.status(400).json({ error: 'Name is required' });
   }
@@ -97,27 +99,36 @@ app.post('/api/users', async (req, res) => {
       .single();
     
     if (checkError && checkError.code !== 'PGRST116') {
+      console.error('Error checking existing user:', checkError);
       throw checkError;
     }
     
     if (existingUser) {
+      console.log('User already exists:', existingUser);
       return res.status(409).json({ error: 'User with this name already exists' });
     }
+    
+    // Create new user with default values
+    const userData = {
+      name,
+      id: id || Date.now().toString(),
+      is_active: isActive !== undefined ? isActive : true,
+      last_updated: lastUpdated || new Date().toISOString(),
+      created_at: new Date().toISOString(),
+      is_tracking: false // Default tracking status
+    };
+    
+    console.log('Inserting user data:', userData);
     
     // Create new user
     const { data: newUser, error: insertError } = await supabase
       .from(TABLES.USERS)
-      .insert([{
-        name,
-        id: id || Date.now().toString(),
-        is_active: isActive,
-        last_updated: lastUpdated || new Date().toISOString(),
-        created_at: new Date().toISOString()
-      }])
+      .insert([userData])
       .select()
       .single();
     
     if (insertError) {
+      console.error('Supabase insert error:', insertError);
       throw insertError;
     }
     
@@ -126,18 +137,59 @@ app.post('/api/users', async (req, res) => {
     
   } catch (error) {
     console.error('Error creating user:', error);
-    res.status(500).json({ error: 'Failed to create user' });
+    res.status(500).json({ 
+      error: 'Failed to create user',
+      details: error.message,
+      code: error.code 
+    });
   }
 });
 
 app.post('/api/users/update-location', async (req, res) => {
   const { name, location, lastUpdated } = req.body;
   
+  console.log('Updating location for user:', { name, location, lastUpdated });
+  
   if (!name || !location) {
     return res.status(400).json({ error: 'Name and location are required' });
   }
   
   try {
+    // First, check if user exists
+    const { data: existingUser, error: userCheckError } = await supabase
+      .from(TABLES.USERS)
+      .select('*')
+      .eq('name', name)
+      .single();
+    
+    if (userCheckError && userCheckError.code === 'PGRST116') {
+      // User doesn't exist, create them first
+      console.log('User not found, creating user:', name);
+      
+      const { data: newUser, error: createError } = await supabase
+        .from(TABLES.USERS)
+        .insert([{
+          name,
+          id: Date.now().toString(),
+          is_active: true,
+          last_updated: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          is_tracking: false
+        }])
+        .select()
+        .single();
+      
+      if (createError) {
+        console.error('Error creating user during location update:', createError);
+        throw createError;
+      }
+      
+      console.log('User created during location update:', newUser);
+    } else if (userCheckError) {
+      console.error('Error checking user:', userCheckError);
+      throw userCheckError;
+    }
+    
     // Convert date formats to ISO if needed
     let recordedAt = location.timestamp;
     if (recordedAt && typeof recordedAt === 'string') {
@@ -185,6 +237,7 @@ app.post('/api/users/update-location', async (req, res) => {
       .single();
     
     if (updateError) {
+      console.error('Error updating user:', updateError);
       throw updateError;
     }
     
