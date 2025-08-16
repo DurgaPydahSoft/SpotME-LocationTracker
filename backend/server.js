@@ -12,7 +12,8 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(express.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+// Remove this line since frontend is hosted separately:
+// app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // Admin routes
 app.use('/api/admin', adminRoutes);
@@ -560,11 +561,6 @@ app.post('/api/users/stop-all-tracking', authenticateAdmin, async (req, res) => 
       details: error.message 
     });
   }
-});
-
-// Serve frontend for all other routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 // Start server
