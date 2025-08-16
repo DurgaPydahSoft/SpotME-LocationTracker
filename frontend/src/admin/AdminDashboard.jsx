@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { getApiUrl } from '../config/api'
 import { useNavigate } from 'react-router-dom'
 
 // Font imports
@@ -95,7 +96,7 @@ const AdminDashboard = () => {
       setTrackingControlLoading(prev => ({ ...prev, [userName]: true }))
       
       const token = localStorage.getItem('adminToken')
-      const response = await fetch('/api/users/start-tracking', {
+      const response = await fetch(getApiUrl('/api/users/start-tracking'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +125,7 @@ const AdminDashboard = () => {
       setTrackingControlLoading(prev => ({ ...prev, [userName]: true }))
       
       const token = localStorage.getItem('adminToken')
-      const response = await fetch('/api/users/stop-tracking', {
+      const response = await fetch(getApiUrl('/api/users/stop-tracking'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -165,7 +166,7 @@ const AdminDashboard = () => {
       if (activeUsers.length === 0) return
       
       const token = localStorage.getItem('adminToken')
-      const response = await fetch('/api/users/start-all-tracking', {
+      const response = await fetch(getApiUrl('/api/users/start-all-tracking'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -195,7 +196,7 @@ const AdminDashboard = () => {
       if (activeUsers.length === 0) return
       
       const token = localStorage.getItem('adminToken')
-      const response = await fetch('/api/users/stop-all-tracking', {
+      const response = await fetch(getApiUrl('/api/users/stop-all-tracking'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -417,7 +418,7 @@ const AdminDashboard = () => {
       setLoading(true)
       console.log('Fetching users from backend...')
       
-      const response = await fetch('/api/users')
+      const response = await fetch(getApiUrl('/api/users'))
       console.log('Response status:', response.status)
       
       if (!response.ok) {
@@ -455,7 +456,7 @@ const AdminDashboard = () => {
       if (token && user) {
         try {
           // Verify token with backend
-          fetch('/api/admin/verify', {
+          fetch(getApiUrl('/api/admin/verify'), {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -804,7 +805,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem('adminToken')
       if (token) {
-        await fetch('/api/admin/logout', {
+        await fetch(getApiUrl('/api/admin/logout'), {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -879,7 +880,7 @@ const AdminDashboard = () => {
       try {
         const token = localStorage.getItem('adminToken')
         // Deactivate all users in Supabase
-        const response = await fetch('/api/users/clear-all', {
+        const response = await fetch(getApiUrl('/api/users/clear-all'), {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`

@@ -335,8 +335,8 @@ app.delete('/api/users/:name', authenticateAdmin, async (req, res) => {
     
     console.log('User deactivated:', name);
     res.json({ success: true, message: 'User deactivated' });
-    
-  } catch (error) {
+        
+    } catch (error) {
     console.error('Error deactivating user:', error);
     res.status(500).json({ error: 'Failed to deactivate user' });
   }

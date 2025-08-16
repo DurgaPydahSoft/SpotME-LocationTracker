@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import { getApiUrl } from '../config/api';
 
 const AdminLoginPopup = ({ isOpen, onClose, onLoginSuccess }) => {
   const [username, setUsername] = useState('');
@@ -12,7 +13,7 @@ const AdminLoginPopup = ({ isOpen, onClose, onLoginSuccess }) => {
     setError('');
 
     try {
-      const response = await fetch('/api/admin/login', {
+      const response = await fetch(getApiUrl('/api/admin/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

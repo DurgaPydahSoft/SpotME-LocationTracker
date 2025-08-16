@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { getApiUrl } from '../config/api'
 
 export const useLocationTracking = () => {
   const [location, setLocation] = useState(null)
@@ -14,7 +15,7 @@ export const useLocationTracking = () => {
     try {
       setLocationName('Loading...')
       
-      const url = `/api/geocode?lat=${lat}&lng=${lng}`
+      const url = getApiUrl(`/api/geocode?lat=${lat}&lng=${lng}`)
       const response = await fetch(url)
       
       if (!response.ok) {
@@ -82,7 +83,7 @@ export const useLocationTracking = () => {
       // Try to send to server immediately if online
       if (isOnline) {
         try {
-          await fetch('/api/location', {
+          await fetch(getApiUrl('/api/location'), {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -137,7 +138,7 @@ export const useLocationTracking = () => {
     
     for (const locationData of locationsToSync) {
       try {
-        const response = await fetch('/api/location', {
+        const response = await fetch(getApiUrl('/api/location'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

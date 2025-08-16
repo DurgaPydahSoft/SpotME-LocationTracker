@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { getApiUrl } from '../config/api'
 import { useLocationTracking } from '../hooks/useLocationTracking'
 import AdminLoginPopup from '../components/AdminLoginPopup'
 
@@ -148,7 +149,7 @@ const UserDashboard = () => {
                 lastUpdated: new Date().toISOString()
               }
               
-              fetch('/api/users/update-location', {
+              fetch(getApiUrl('/api/users/update-location'), {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -367,7 +368,7 @@ const UserDashboard = () => {
     localStorage.setItem('activeUsers', JSON.stringify(existingUsers))
     
     // Send user data to backend
-    fetch('/api/users', {
+    fetch(getApiUrl('/api/users'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -429,7 +430,7 @@ const UserDashboard = () => {
       }
       
       // Send to backend
-      fetch('/api/users/update-location', {
+      fetch(getApiUrl('/api/users/update-location'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
